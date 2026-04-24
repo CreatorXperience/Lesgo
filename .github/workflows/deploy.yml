@@ -37,8 +37,8 @@ jobs:
           file: ./backend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ lower(github.repository) }}-backend:${{ github.sha }}
-            ghcr.io/${{ lower(github.repository) }}-backend:latest
+            ghcr.io/creatorxperience/lesgo-backend:${{ github.sha }}
+            ghcr.io/creatorxperience/lesgo-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -50,8 +50,8 @@ jobs:
           file: ./frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ lower(github.repository) }}-frontend:${{ github.sha }}
-            ghcr.io/${{ lower(github.repository) }}-frontend:latest
+            ghcr.io/creatorxperience/lesgo-frontend:${{ github.sha }}
+            ghcr.io/creatorxperience/lesgo-frontend:latest
           build-args: |
             VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}
             VITE_API_KEY=${{ vars.VITE_API_KEY }}
@@ -60,8 +60,8 @@ jobs:
 
       - name: Output image digests
         run: |
-          echo "BACKEND_IMAGE=ghcr.io/${{ lower(github.repository) }}-backend:${{ github.sha }}" >> $GITHUB_ENV
-          echo "FRONTEND_IMAGE=ghcr.io/${{ lower(github.repository) }}-frontend:${{ github.sha }}" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE=ghcr.io/creatorxperience/lesgo-backend:${{ github.sha }}" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE=ghcr.io/creatorxperience/lesgo-frontend:${{ github.sha }}" >> $GITHUB_ENV
 
   deploy:
     needs: build
@@ -99,8 +99,8 @@ jobs:
         run: |
           docker compose up -d
         env:
-          BACKEND_IMAGE: ghcr.io/${{ lower(github.repository) }}-backend:${{ github.sha }}
-          FRONTEND_IMAGE: ghcr.io/${{ lower(github.repository) }}-frontend:${{ github.sha }}
+          BACKEND_IMAGE: ghcr.io/creatorxperience/lesgo-backend:${{ github.sha }}
+          FRONTEND_IMAGE: ghcr.io/creatorxperience/lesgo-frontend:${{ github.sha }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
