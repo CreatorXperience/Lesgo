@@ -6,10 +6,20 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY dashboard/package*.json ./
 RUN npm ci
 
-COPY . .
+# Copy source and config files from dashboard/
+COPY dashboard/src ./src
+COPY dashboard/index.html ./
+COPY dashboard/tailwind.config.js ./
+COPY dashboard/tailwind.config.ts ./
+COPY dashboard/postcss.config.js ./
+COPY dashboard/vite.config.js ./
+COPY dashboard/vite.config.ts ./
+COPY dashboard/tsconfig.json ./
+COPY dashboard/tsconfig.node.json ./
+COPY dashboard/tsconfig.node.tsbuildinfo ./
 
 # Vite will pick up VITE_* env vars at build time
 ARG VITE_API_BASE_URL
@@ -24,10 +34,8 @@ FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Custom nginx config for SPA routing
 RUN echo 'server { \
     listen 80; \
     server_name _; \
