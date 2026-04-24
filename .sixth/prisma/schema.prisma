@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider            = "prisma-client"
   output              = "../src/generated/prisma"
@@ -19,42 +25,32 @@ model Job {
   candidates Candidate[]
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
-}
-
 model Candidate {
   id String @id @default(cuid())
 
+  // --- identity ---
   name     String?
   email    String?
   phone    String?
   location String?
 
+  // --- raw input ---
   resumeText String?
 
+  // --- job relation ---
   jobId String
   job   Job    @relation(fields: [jobId], references: [id])
 
+  // --- pipeline state ---
   stage CandidateStage @default(APPLIED)
 
+  // --- AI 1: enrichment output ---
   coreSkills           Json?
   experienceSummary    Json?
   externalLinkAnalysis Json?
   overallAssessment    Json?
 
+  // --- AI 2: evaluation output ---
   yearsOfExperience Int?
   skills            Json?
   topSkillsMatch    Json?
@@ -74,6 +70,7 @@ model Candidate {
 
   summary String?
 
+  // --- meta ---
   resumeUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,8 +101,8 @@ model Recommendation {
 
   value RecommendationValue
 
-  confidence Float?
-  reasoning  String?
+  confidence Float? // how sure AI is (0-1)
+  reasoning  String? // explanation from AI
 
   strengths Json?
   risks     Json?

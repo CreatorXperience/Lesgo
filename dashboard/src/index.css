@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+
+  body {
+    @apply min-h-screen bg-dashboard-glow font-sans text-ink antialiased;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .panel-surface {
+    @apply rounded-2xl border border-white/60 bg-white/90 shadow-panel backdrop-blur;
+  }
+}

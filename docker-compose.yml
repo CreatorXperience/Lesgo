@@ -1,0 +1,62 @@
+# =============================================
+# Docker Compose
+# =============================================
+services:
+  backend:
+    image: ${BACKEND_IMAGE:-backend:local}
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - N8N_API_KEY=${N8N_API_KEY}
+      - PORT=${PORT:-4000}
+      - CORS_ORIGIN=http://frontend:80
+    ports:
+      - "${PORT:-4000}:4000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/ui/candidates"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-frontend:local}
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://backend:4000
+        - VITE_API_KEY=${N8N_API_KEY}
+    environment:
+      - VITE_API_BASE_URL=http://backend:4000
+      - VITE_API_KEY=${N8N_API_KEY}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-lesgo}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-lesgo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
