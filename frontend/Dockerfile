@@ -26,7 +26,7 @@ ARG VITE_API_KEY
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_API_KEY=$VITE_API_KEY
 
-RUN npm run build
+RUN npx vite build
 
 # Stage 2: Serve static files
 FROM nginx:alpine
