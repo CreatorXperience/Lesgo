@@ -14,12 +14,11 @@ COPY dashboard/src ./src
 COPY dashboard/index.html ./
 COPY dashboard/tailwind.config.js ./
 COPY dashboard/tailwind.config.ts ./
-COPY dashboard/postcss.config.js ./
+COPY dashboard/postcss.config.cjs ./
 COPY dashboard/vite.config.js ./
 COPY dashboard/vite.config.ts ./
 COPY dashboard/tsconfig.json ./
 COPY dashboard/tsconfig.node.json ./
-COPY dashboard/tsconfig.node.tsbuildinfo ./
 
 # Vite will pick up VITE_* env vars at build time
 ARG VITE_API_BASE_URL
